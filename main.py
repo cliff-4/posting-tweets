@@ -1,13 +1,8 @@
-# installed tweepy
-from ast import Return
-from datetime import datetime
-import tweepy
+import tweepy # installed tweepy
 import json
-import time
-
-with open('credentials.json', "r") as j: creds = json.load(j)
 
 def OAuth():
+	with open('credentials.json', "r") as j: creds = json.load(j)
 	try:
 		auth = tweepy.OAuthHandler(creds["api_key"], creds["api_key_secret"])
 		auth.set_access_token(creds["access_token"], creds["access_token_secret"])
@@ -18,16 +13,14 @@ def OAuth():
 def tweet_text():
 	api = tweepy.API(OAuth())
 
-	text = ""
+	text = "suffering"
 	#with open('personal/i.txt', "r") as file: text = file.read()
 	#with open('personal/i.txt', "w") as file: file.write(str(int(text)+1))
-	#text = "@siighduuck " + text
-	text = "@siighduuck " + "Dump thread"
+	text = "@siighduuck " + text
 
 	if len(text) > 280: #tweet length fail check
 		print("Too long, please shorten the tweet")
 		return None
-	id1 = 0
 	try: 
 		id1 = api.update_status(
 			status = text, 
@@ -43,14 +36,17 @@ def tweet_text():
 		print("tweeted")
 	except Exception as e:
 		print(e)
-	print(id1.id)
 
-def fun_lol():
+def word_thread(word, tweet_id):
+	"""
+	Takes in a string argument and a tweet ID.
+	Then posts a tweet thread with individual letters as thread components.
+	Note that two consecutive letters can't be the same.
+	"""
 	api = tweepy.API(OAuth())
-	lenny = "FUCKOFf"
 
-	prev_id = 1535676459808788480
-	for i in lenny:
+	prev_id = tweet_id
+	for i in word:
 		text = "@siighduuck " + i
 		id1 = api.update_status(
 			status = text, 
@@ -58,9 +54,9 @@ def fun_lol():
 		)
 		prev_id = id1.id
 
-
 if __name__ == "__main__":
+	with open("personal/tweet_ids.json", "r") as t: ids = json.load(t)
 	#text = input()
 	#tweet_text()
-	#fun_lol()
+	word_thread("STRING", ids["dump_thread"])
 	print("Success")
