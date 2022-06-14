@@ -1,6 +1,8 @@
 import tweepy # installed tweepy
 import json
 import time
+import csv
+from apscheduler.schedulers.blocking import BlockingScheduler # to schedule perma liking
 
 with open('credentials.json', "r") as j: creds = json.load(j)
 with open("personal/tweet_ids.json", "r") as t: ids = json.load(t)
@@ -87,13 +89,39 @@ def media_tweet():
 		in_reply_to_status_id = in_reply_to_id
 	)
 
+def instant_like_all_users(count = 5):
+	if count > 20: return
+	filename = "personal/perma_like_list.csv"
+	perma_like_list = []
+	with open(filename, 'r') as csvfile:
+		csvreader = csv.reader(csvfile)
+		for row in csvreader: perma_like_list.append(row[0])
+	for user in perma_like_list:
+		tweet_object = api.user_timeline(
+			screen_name = user,
+			count=count,
+			since_id = ids["first tweet of 2022"]
+		)
+		for tweet in tweet_object:
+			try: 
+				api.create_favorite(tweet.id)
+			except Exception as e:
+				continue
+			liking_message_log(user, tweet.id)
+
+def liking_message_log(screen_name, tweet_id):
+	print("Just liked this Tweet by @" + screen_name + ": ", end = "")
+	print("https://twitter.com/"+screen_name+"/status/"+str(tweet_id))
+
 if __name__ == "__main__":
 	api = tweepy.API(OAuth()) #authenticating. always keep this here.
-	
+	scheduler = BlockingScheduler()
 	#tweet_text()
 	#word_thread("STRING", ids["dump_thread"])
 	#create_and_delete()
 	#posting_file(ids)
 	#media_tweet()
+	scheduler.add_job(instant_like_all_users, 'interval', minutes=30)
 	
+	scheduler.start()
 	print("Success")
