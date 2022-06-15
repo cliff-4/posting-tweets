@@ -3,6 +3,7 @@ import json
 import time
 import csv
 from apscheduler.schedulers.blocking import BlockingScheduler # to schedule perma liking
+import datetime
 
 with open('credentials.json', "r") as j: creds = json.load(j)
 with open("personal/tweet_ids.json", "r") as t: ids = json.load(t)
@@ -95,6 +96,7 @@ def instant_like_all_users(count = 5):
 	perma_like_list = []
 	with open(filename, 'r') as csvfile:
 		csvreader = csv.reader(csvfile)
+		next(csvreader) # to remove the field name
 		for row in csvreader: perma_like_list.append(row[0])
 	for user in perma_like_list:
 		tweet_object = api.user_timeline(
@@ -111,17 +113,28 @@ def instant_like_all_users(count = 5):
 
 def liking_message_log(screen_name, tweet_id):
 	print("Just liked this Tweet by @" + screen_name + ": ", end = "")
-	print("https://twitter.com/"+screen_name+"/status/"+str(tweet_id))
+	print("https://twitter.com/"+screen_name+"/status/"+str(tweet_id), end=" at ")
+	print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+
+def get_tweet_from_id():
+	#id = input("ID: ")
+	tweet = api.get_status(id = 1535684755978874880)
+	print(tweet.text)
+
+def scheduled_liking():
+	scheduler = BlockingScheduler()
+	print("Twitter API started...")
+	instant_like_all_users(5)
+	scheduler.add_job(instant_like_all_users, 'interval', minutes=30)
+	scheduler.start()
 
 if __name__ == "__main__":
 	api = tweepy.API(OAuth()) #authenticating. always keep this here.
-	scheduler = BlockingScheduler()
 	#tweet_text()
 	#word_thread("STRING", ids["dump_thread"])
 	#create_and_delete()
 	#posting_file(ids)
 	#media_tweet()
-	scheduler.add_job(instant_like_all_users, 'interval', minutes=30)
-	
-	scheduler.start()
+	#get_tweet_from_id()
+	scheduled_liking()
 	print("Success")
