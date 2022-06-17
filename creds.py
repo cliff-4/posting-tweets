@@ -1,4 +1,5 @@
 import json
+import csv
 
 def get_cred(cred):
 	"""Argument has to be a string since its retreiving from a json file."""
@@ -20,6 +21,17 @@ def get_id(identifier):
 		except KeyError: 
 			print("No such key exists in tweet_ids.json. Maybe check the key or try get_cred() instead.")
 			return None
+
+def get_csv(file_name):
+	"""Returns an array with the lines of the csv as different elements"""
+	filename = file_name
+	return_list = []
+	with open(filename, 'r') as csvfile:
+		csvreader = csv.reader(csvfile)
+		next(csvreader) # to remove the field names
+		for row in csvreader:
+			return_list.append(row)
+	return return_list
 
 if __name__ == "__main__":
 	print("This is a side script to get credentials and ids, since repetitive calling of with open bla bla bla was too much.")
