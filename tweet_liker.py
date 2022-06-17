@@ -20,7 +20,7 @@ def main():
 	for user in perma_like_list:
 		if user[1] == "verified": verf = True
 		elif user[1] == "not verified": verf = False
-		count = 2 + verf*3 # Liking past 2 tweets if the user is not verified and past 5 if it is. (This measure is taken in order to neet seem creepy by your friends and relatives. Unless your relative is Elon Musk)
+		count = 2 + verf*4 # Liking past 2 tweets if the user is not verified and past 5 if it is. (This measure is taken in order to neet seem creepy by your friends and relatives. Unless your relative is Elon Musk)
 		tweet_object = api.user_timeline(
 			screen_name = user[0],
 			count=count,
