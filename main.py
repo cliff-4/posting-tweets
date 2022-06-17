@@ -4,6 +4,8 @@ import time
 import csv
 from apscheduler.schedulers.blocking import BlockingScheduler # to schedule perma liking
 import datetime
+import sys,os
+sys.path.append(os.getcwd())
 
 with open('credentials.json', "r") as j: creds = json.load(j)
 with open("personal/tweet_ids.json", "r") as t: ids = json.load(t)
