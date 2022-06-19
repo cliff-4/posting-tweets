@@ -34,7 +34,7 @@ def main():
 				api.create_favorite(tweet.id)
 			except Exception as e:
 				continue
-			if not verf: liking_message_log(user[0], tweet.id)
+			liking_message_log(user[0], tweet.id)
 	print("---")
 
 def liking_message_log(screen_name, tweet_id):
