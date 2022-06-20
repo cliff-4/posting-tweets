@@ -36,22 +36,22 @@ def main():
 			except Exception as e:
 				continue
 			liking_message_log(user[0], tweet.id)
-	print("---")
+	print("\n---")
 
 def liking_message_log(screen_name, tweet_id):
-	print("Just liked this Tweet by @{}: ".format(screen_name), end = "")
+	print("\nJust liked this Tweet by @{}: ".format(screen_name), end = "")
 	print("https://twitter.com/{}/status/{} at ".format(screen_name, tweet_id), end="")
 	print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
 
 def scheduled_liking(*kwargs, hours=0, minutes=0, seconds=0):
 	scheduler = BlockingScheduler()
-	print("Twitter API started...")
+	print("\nTwitter API started...")
 	scheduler.add_job(main, 'interval', hours=hours, minutes=minutes, seconds=seconds, max_instances=2)
 	main()
 	try: 
 		scheduler.start()
 	except KeyboardInterrupt:
-		print("Successfully ended.")
+		print("\nSuccessfully ended.")
 
 
 if __name__ == "__main__":
