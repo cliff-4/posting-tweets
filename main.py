@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import tweepy # installed tweepy
 import json
 import time
@@ -140,3 +141,15 @@ if __name__ == "__main__":
 	#get_tweet_from_id()
 	scheduled_liking()
 	print("Success")
+
+	{
+		[
+			(
+				(
+					{
+
+					}
+				)
+			)
+		]
+	}	

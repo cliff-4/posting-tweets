@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import tweepy # installed tweepy
 from apscheduler.schedulers.blocking import BlockingScheduler # to schedule perma liking
 import datetime # to print when the tweet was liked
