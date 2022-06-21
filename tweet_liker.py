@@ -57,4 +57,4 @@ def scheduled_liking(*kwargs, hours=0, minutes=0, seconds=0):
 
 if __name__ == "__main__":
 	api = tweepy.API(OAuth())
-	scheduled_liking(minutes = 10)
+	scheduled_liking(minutes = 5)
