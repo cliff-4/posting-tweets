@@ -27,11 +27,7 @@ def main():
 	strings_to_print = [f"New iteration started at [{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}]"]
 	print(*strings_to_print, end = '\r')
 	now = time.time()
-	likelist = get_csv("personal/perma_like_list.csv")
-	if len(likelist) > 100: 
-		print(f"retreiving user ids can only be done 100 at a time. Current lenght: [{len(likelist)}]")
-		sys.exit()
-
+	
 	users = classify("personal/perma_like_list.json")
 	
 	total_tweets_liked = 0
