@@ -23,8 +23,9 @@ def auth():
 			self.token_secret = details["access_token_secret"]
 	return authdetails()
 
-def main():
-	strings_to_print = [f"New iteration started at [{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}]"]
+def main(hours=0, minutes=15, seconds=0):
+	time_of_start = datetime.datetime.now()
+	strings_to_print = [f"New iteration started at [{time_of_start.strftime('%d-%m-%Y %H:%M:%S')}]"]
 	print(*strings_to_print, end = '\r')
 	now = time.time()
 	
@@ -65,9 +66,11 @@ def main():
 	strings_to_print.append(f"[Time taken: {round(timetaken)} seconds]")
 	strings_to_print.append(f"[Tweets liked: {total_tweets_liked} (among {total} users)]")
 	print(*strings_to_print)
-	print("Waiting for next session to start...", end='\r')
 
-def scheduled_liking(*kwargs, hours=0, minutes=0, seconds=0):
+	next_iter_start = time_of_start + datetime.timedelta(minutes=minutes)
+	print(f"Waiting for next session to start... (ETA: {next_iter_start.strftime('%d-%m-%Y %H:%M:%S')})", end='\r')
+
+def scheduled_liking(hours=0, minutes=15, seconds=0): # Default duration between executions = 15 minutes
 	scheduler = BlockingScheduler()
 	print("\nTwitter API started...")
 	scheduler.add_job(main, 'interval', hours=hours, minutes=minutes, seconds=seconds, max_instances=1)
@@ -128,7 +131,7 @@ def like(user, tweet_id_str, verf_logging = False, nverf_logging = True):
 def loading(progress, base, show_percentage):
 	block_str = '█'
 	empty_str = '_'
-	length = 10
+	length = 15
 
 	a = round((progress/base)*length)
 	b = length - a
@@ -138,4 +141,4 @@ def loading(progress, base, show_percentage):
 
 if __name__ == "__main__":
 	credentials = auth()
-	scheduled_liking(minutes = 15)
+	scheduled_liking()
