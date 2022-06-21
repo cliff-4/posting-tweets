@@ -17,6 +17,7 @@ def OAuth():
 		return None
 
 def main():
+	print(f"\nNew iteration started at [{datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')}]")
 	now = time.time()
 	filename = "personal/perma_like_list.csv"
 	perma_like_list = get_csv(filename)
