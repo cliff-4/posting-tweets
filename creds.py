@@ -33,6 +33,10 @@ def get_csv(file_name):
 			return_list.append(row)
 	return return_list
 
+def get_json(filename):
+	with open(filename, "r") as j:
+		return json.load(j)
+
 if __name__ == "__main__":
 	print("This is a side script to get credentials and ids, since repetitive calling of with open bla bla bla was too much.")
 	print("Just import this file and use the functions. Simple as that. Got it? No? Good.")

@@ -38,7 +38,7 @@ def main():
 				continue
 			liking_message_log(user[0], tweet.id)
 	timetaken = time.time() - now
-	print(f"\n--- Last iteration took [{timetaken} seconds]")
+	print(f"\n--- Last iteration took [{round(timetaken)} seconds]")
 
 def liking_message_log(screen_name, tweet_id):
 	print("\nJust liked this Tweet by @{}: ".format(screen_name), end = "")
