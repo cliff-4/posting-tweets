@@ -67,7 +67,7 @@ def main():
 
 	timetaken = time.time() - now
 	strings_to_print.append(f"[Time taken: {round(timetaken)} seconds]")
-	strings_to_print.append(f"[Tweets liked: {total_tweets_liked}(among {total} users)]")
+	strings_to_print.append(f"[Tweets liked: {total_tweets_liked} (among {total} users)]")
 	print(*strings_to_print)
 	print("Waiting for next session to start...", end='\r')
 
