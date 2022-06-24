@@ -25,24 +25,34 @@ def auth():
 
 def main(hours=0, minutes=15, seconds=0):
 	time_of_start = datetime.datetime.now()
-	strings_to_print = [f"New iteration started at [{time_of_start.strftime('%d-%m-%Y %H:%M:%S')}]"]
-	print(*strings_to_print, end = '\r')
 	now = time.time()
 
-	# for logging purposes
-	log_list = ['<meta name="twitter:widgets:theme" content="dark">'] # list full of html in string format
-	
-	users = classify("personal/perma_like_list.json")
-	
-	total_tweets_liked = 0
+	strings_to_print = [f"New iteration started at [{time_of_start.strftime('%d-%m-%Y %H:%M:%S')}]"]
+	print(*strings_to_print, end = '\r')
 
-	total = len(users)
-	iter = 0
+	users = classify("personal/perma_like_list.json")
+
+	# for logging purposes
+	## list full of html in string format
+	log_list = ['<meta name="twitter:widgets:theme" content="dark">'] 
+	
+	# importing liked list
+	liked_list = get_json("liked_log/already_liked.json")
+	
+	# loading bar & diagnostics of session
+	loading_iter = 0
+	total = loading_total = len(users)
+	total_tweets_liked = 0
+	
 	strings_to_print.append("")
 	for user in users:
-		strings_to_print[1] = loading(iter, total, show_percentage=True)
+		strings_to_print[1] = loading(loading_iter, loading_total, show_percentage=True)
 		print(*strings_to_print, end='\r')
-		n = 5 # n min = 5 max = 100
+		loading_iter += 1
+
+		# n min = 5 max = 100
+		n = 5 
+
 		url = f"https://api.twitter.com/2/users/{user.id}/tweets?max_results={n}&tweet.fields=in_reply_to_user_id&exclude=retweets,replies"
 
 		authorization_header = {'Authorization': f'Bearer {credentials.bearer}'}
@@ -52,37 +62,48 @@ def main(hours=0, minutes=15, seconds=0):
 			total -= 1
 			continue
 
-		if response['meta']['result_count'] == 0: continue
+		if response['meta']['result_count'] == 0:
+			total -= 1
+			continue
+
+		for tweet in response['data']:
+			if not ('in_reply_to_user_id' in tweet): break
+		if (tweet["id"] in liked_list):
+			total -= 1
+			continue
+		else:
+			liked_list.append(tweet["id"])
 
 		try:
-			for tweet in response['data']:
-				if not ('in_reply_to_user_id' in tweet): break
 			is_liked = like(user, tweet["id"], verf_logging = False, nverf_logging = False)
-			if is_liked: 
-				total_tweets_liked+=1
-				resp = requests.get(f"https://publish.twitter.com/oembed?url=https%3A%2F%2Ftwitter.com%2Fuser%2Fstatus%2F{tweet['id']}")
-				toappend = resp.json()["html"].split("\n")
-				log_list.append(toappend[0])
-			else: 
-				total -= 1
-				continue
 		except Exception as e:
-			print(f"\nUnexpected Error occured for the following user: \n{user.info()}")
-			print(f"User Request Response: {response}")
+			print(f"\nUnexpected Error occured for the following user- \n{user.info()}")
+			print(f"User Request Response: {response}\n\n")
 			print(f"Error Message: {e}")
 			sys.exit()
+		if is_liked: 
+			total_tweets_liked+=1
+			embed_code = requests.get(f"https://publish.twitter.com/oembed?url=https%3A%2F%2Ftwitter.com%2Fuser%2Fstatus%2F{tweet['id']}")
+			toappend = embed_code.json()["html"].split("\n")
+			log_list.append(toappend[0])
+		else: 
+			total -= 1
+			continue
 
-		iter += 1
 		print(*strings_to_print, end='\r')
 	strings_to_print.pop()
 
 	# logging
 	log_list.append('<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')
-	with open(f"liked_log/{time_of_start.strftime('%Y-%m-%d %H-%M-%S')}.html", "a") as L:
-		for tweet_embed in log_list:
-			line = tweet_embed + "\n"
-			clean_line = line.encode('ascii', 'namereplace').decode()
-			L.write(clean_line)
+	if len(log_list) > 2:
+		with open(f"liked_log/{time_of_start.strftime('%Y-%m-%d %H-%M-%S')}.html", "a") as L:
+			for tweet_embed in log_list:
+				line = tweet_embed + "\n"
+				clean_line = line.encode('ascii', 'namereplace').decode()
+				L.write(clean_line)
+
+	# exporting liked list
+	with open("liked_log/already_liked.json", "w") as J: json.dump(liked_list, J)
 
 	timetaken = time.time() - now
 	strings_to_print.append(f"[Time taken: {round(timetaken)} seconds]")
@@ -170,3 +191,8 @@ def loading(progress, base, show_percentage=True):
 if __name__ == "__main__":
 	credentials = auth()
 	scheduled_liking()
+
+### Issues
+# When skipping tweets based on the list of ids that are already liked, 
+# it just simply skips the user and doesn't get to the next possible id in the list 
+# which might still be unliked.
