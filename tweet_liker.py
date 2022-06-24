@@ -37,13 +37,17 @@ def main(hours=0, minutes=15, seconds=0):
 	iter = 0
 	strings_to_print.append("")
 	for user in users:
-		strings_to_print[1] = loading(iter, total, True)
+		strings_to_print[1] = loading(iter, total, show_percentage=True)
 		print(*strings_to_print, end='\r')
 		n = 5 # n min = 5 max = 100
 		url = f"https://api.twitter.com/2/users/{user.id}/tweets?max_results={n}&tweet.fields=in_reply_to_user_id&exclude=retweets,replies"
 
 		authorization_header = {'Authorization': f'Bearer {credentials.bearer}'}
-		response = requests.request("GET", url, headers=authorization_header).json()
+		try: 
+			response = requests.request("GET", url, headers=authorization_header, timeout=10).json()
+		except TimeoutError:
+			total -= 1
+			continue
 
 		if response['meta']['result_count'] == 0: continue
 
@@ -119,7 +123,13 @@ def like(user, tweet_id_str, verf_logging = False, nverf_logging = True):
 	headers = {'Content-Type': 'application/json'}
 
 	# combining it all
-	response = requests.post(url, auth=authentication, data=payload, headers=headers).json()
+	try: 
+		response = requests.post(url, auth=authentication, data=payload, headers=headers, timeout=10).json()
+	except TimeoutError:
+		return None
+	# If response is taking too long to return, just return NULL and return in the main function as well
+	# printing Error message and moving on to waiting for the next instance of schedule.
+
 
 	is_liked = (response['data']['liked'] if "liked" in response['data'] else False) if "data" in response else False
 
@@ -128,7 +138,7 @@ def like(user, tweet_id_str, verf_logging = False, nverf_logging = True):
 		pass
 	return is_liked
 
-def loading(progress, base, show_percentage):
+def loading(progress, base, show_percentage=True):
 	block_str = '█'
 	empty_str = '_'
 	length = 15
