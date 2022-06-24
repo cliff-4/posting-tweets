@@ -28,6 +28,9 @@ def main(hours=0, minutes=15, seconds=0):
 	strings_to_print = [f"New iteration started at [{time_of_start.strftime('%d-%m-%Y %H:%M:%S')}]"]
 	print(*strings_to_print, end = '\r')
 	now = time.time()
+
+	# for logging purposes
+	log_list = ['<meta name="twitter:widgets:theme" content="dark">'] # list full of html in string format
 	
 	users = classify("personal/perma_like_list.json")
 	
@@ -55,7 +58,14 @@ def main(hours=0, minutes=15, seconds=0):
 			for tweet in response['data']:
 				if not ('in_reply_to_user_id' in tweet): break
 			is_liked = like(user, tweet["id"], verf_logging = False, nverf_logging = False)
-			if is_liked: total_tweets_liked+=1
+			if is_liked: 
+				total_tweets_liked+=1
+				resp = requests.get(f"https://publish.twitter.com/oembed?url=https%3A%2F%2Ftwitter.com%2Fuser%2Fstatus%2F{tweet['id']}")
+				toappend = resp.json()["html"].split("\n")
+				log_list.append(toappend[0])
+			else: 
+				total -= 1
+				continue
 		except Exception as e:
 			print(f"\nUnexpected Error occured for the following user: \n{user.info()}")
 			print(f"User Request Response: {response}")
@@ -65,6 +75,14 @@ def main(hours=0, minutes=15, seconds=0):
 		iter += 1
 		print(*strings_to_print, end='\r')
 	strings_to_print.pop()
+
+	# logging
+	log_list.append('<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')
+	with open(f"liked_log/{time_of_start.strftime('%Y-%m-%d %H-%M-%S')}.html", "a") as L:
+		for tweet_embed in log_list:
+			line = tweet_embed + "\n"
+			clean_line = line.encode('ascii', 'namereplace').decode()
+			L.write(clean_line)
 
 	timetaken = time.time() - now
 	strings_to_print.append(f"[Time taken: {round(timetaken)} seconds]")
