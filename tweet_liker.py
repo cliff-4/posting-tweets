@@ -115,7 +115,7 @@ def main(hours=0, minutes=15, seconds=0):
 
 def scheduled_liking(hours=0, minutes=15, seconds=0): # Default duration between executions = 15 minutes
 	scheduler = BlockingScheduler()
-	print("\nTwitter API started...")
+	print("Twitter API started...")
 	scheduler.add_job(main, 'interval', hours=hours, minutes=minutes, seconds=seconds, max_instances=1)
 	main()
 	try: 
