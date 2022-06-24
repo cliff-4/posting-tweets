@@ -16,7 +16,7 @@ pip install apscheduler
 ## Edit some files
 1. `credentials.json`: This file needs to be edited and populated with appropriate credentials according to your application
 2. `personal/tweet_ids.json`: add any tweet id you want to use in the program. Any of these can be easily retreived inside the code using functions in `creds.py`. <br>
-(P.S. you can use [`API.get_user()`](https://docs.tweepy.org/en/stable/api.html#tweepy.API.get_user) to get your `user_id`)
+(P.S. you can use [`API.get_user()`](https://docs.tweepy.org/en/stable/api.html#tweepy.API.get_user) to get your `user_id` if using code that utilizes `tweepy`)
 3. `personal/perma_like_list.csv`: `\n` separated list of all user names you wish to follow in `tweet_liker.py`.
 
 ## Some links I found very useful
