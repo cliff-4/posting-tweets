@@ -96,7 +96,7 @@ def main(hours=0, minutes=15, seconds=0):
 	# logging
 	log_list.append('<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>')
 	if len(log_list) > 2:
-		with open(f"liked_log/{time_of_start.strftime('%Y-%m-%d %H-%M-%S')}.html", "a") as L:
+		with open(f"liked_log/{time_of_start.strftime('%Y-%m-%d_%H-%M-%S')}.html", "a") as L:
 			for tweet_embed in log_list:
 				line = tweet_embed + "\n"
 				clean_line = line.encode('ascii', 'namereplace').decode()
