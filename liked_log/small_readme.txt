@@ -1,0 +1,1 @@
+Create a "liked_log/already_liked.json" file and it should just be a list with all the tweets that are liked in string format. If empty, the program will create and populate the list on its own.

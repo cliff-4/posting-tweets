@@ -131,4 +131,5 @@ dmypy.json
 ####################### my changes
 credentials.json
 personal
-liked_log/*
+liked_log/*.html
+liked_log/*.json
