@@ -193,6 +193,6 @@ if __name__ == "__main__":
 	scheduled_liking()
 
 ### Issues
-# When skipping tweets based on the list of ids that are already liked, 
-# it just simply skips the user and doesn't get to the next possible id in the list 
-# which might still be unliked.
+# When skipping tweets based on the list of ids that are already liked, it just simply skips the user and doesn't get to the next possible id in the list which might still be unliked.
+# Timeout exception creates another while handling it. Fix it.
+# In the perma_like_list.json also save last liked tweet of that person so you can just like the next one and update the list. In this way also schedule with like 5min interval to catch-up on past tweets.
